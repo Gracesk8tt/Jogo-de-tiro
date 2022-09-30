@@ -1,0 +1,156 @@
+<!doctype html>
+<html>
+<script>
+     class Sprite{
+          constructor (ctx, imagem, x, y,largura,altura,velocidade){
+               this.ctx = ctx;
+               this.imagem = imagem;
+               this.x = x;
+               this.y= y;
+               this.destinoX = 0;
+               this.destinoY = y;
+               this.altura = altura;
+               this.largura = largura;
+               this.velocidade = velocidade;
+
+          }
+      apaga (){
+          this.ctx.clearRect( this.x,this.y,this.largura,this.altura);
+     }
+     desenha(){
+     
+          this. ctx.drawImage(this.imagem,this.x,this.y);
+
+      }
+      move(){
+
+          if((this.destinoX == this.x)
+               && (this.destinoY == this.y))
+               return;
+          this.apaga();
+
+          if (this.destinoX != this.x){
+
+          
+          if(this.destinoX > this.x)
+               this.x += this.velocidade;
+          else
+               this.x -= this.velocidade;
+          }
+          if (this.destinoY != this.y){
+
+          if(this.destinoY > this.y)
+               this.y += this.velocidade;
+          else
+               this.y -= this.velocidade;
+          }
+
+          this.desenha();
+
+          }
+
+      }
+      class Inimigo1 extends Sprite {
+          constructor(ctx,imagem,x,velocidade){
+             super (ctx,imagem,x,0,34,60,velocidade);
+          }
+          move() {
+
+               if (this.x >= 500){
+                   this.destinoX = 0;
+                  
+                  }
+                  if (this.x <= 0){
+                      this.destinoX=500;
+                  }
+                  super.move();
+                 }
+          }
+          
+     class Tiro extends Sprite{
+               constructor (ctx,x,y,orientacao){
+                 let imagem = document.getElementById("id_tiro");
+                 super(ctx,imagem,x,y,17,17,2); 
+                  this.destinoX = x;
+                  if(orientacao == 1){
+                    this.destinoY = 0;
+                  } else{
+                    this.destinoY=350;
+               }
+          }     
+     }
+     class Nave extends Sprite{
+          constructor (ctx, imagem){
+              super(ctx,imagem, 0 ,350,35,44,2);
+
+          }
+      
+      move(){
+
+          if(this.destinoX == this.x)
+               return;
+          this.apaga();
+
+          if(this.destinoX > this.x)
+               this.x += 2;
+          else
+               this.x -= 2;
+          this.desenha();
+
+      }
+      posicao(x){
+          this.destinoX = x + (x%2);
+      }
+      tiro(){
+      return new Tiro(this.ctx,this.x+17, 350,1);
+ 
+      }
+
+     }
+
+     let nave;
+     let sprites =[];
+
+     function posicao(event) {
+     nave.posicao(event.offsetX);       
+}
+
+function tiro () {
+     sprites.push(nave.tiro());
+     
+}
+
+function executaCiclo(){
+ //nave.move();
+ for (let i = 0; i < sprites.length; i++)
+ sprites[i].move();
+        
+}
+function iniciar () {
+     let canvas = document.getElementById("myCanvas");
+     let ctx = canvas.getContext("2d");
+
+     let imagem = document.getElementById(
+          "nave");
+
+     nave = new Nave(ctx,imagem);
+     let imagemInimigo1 = document.getElementById(
+          "inimigo1");
+     sprites[0]=nave;
+     inimigo1 = new Inimigo1 (ctx,imagemInimigo1);
+     for( let i= 1; i < 6; i++){
+          let x = i * 50;
+          sprites[i] = new Inimigo1 (ctx,imagemInimigo1,x,1+(i%3));
+
+     }
+     window.setInterval(executaCiclo,10);
+}
+</script>
+<body onload = "iniciar()"><canvas id = "myCanvas" width="600" height="400" style="background-color:white;border:1px solid #000000;" onmousemove ="posicao(event)" onclick ="tiro()"></canvas>
+     <img src="nave.png" id="nave" >
+     <img src="inimigo-fase1.png" id="inimigo1" >
+     <img src="inimigo-fase2.png"id="inimigo2" >
+     <img src="inimigo-fase3.png"id="inimigo3" >
+     <img src="tiro.png"id="id_tiro" >
+   	</body>
+</html>   	
